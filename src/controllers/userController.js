@@ -1,4 +1,5 @@
 const { registerUser } = require('../services/userService');
+
 async function createUser(req, res) {
 
     try {
