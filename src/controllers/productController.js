@@ -8,7 +8,7 @@ async function addProduct(req, res) {
         const product = await createProduct({
             productName : req.body.productName,
             discription : req.body.discription,
-            imagePath : req.file.path,
+            imagePath : req.file?.path, // request . file check null or not
             price : req.body.price,
             category : req.body.category, // if category is undefined, veg will be stored
             inStock : req.body.inStock // if instock is undefined then true will be stored
