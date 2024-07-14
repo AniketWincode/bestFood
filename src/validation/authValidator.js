@@ -1,5 +1,6 @@
 const jwt = require('jsonwebtoken');
 const { JWT_SECRET } = require('../config/serverConfig');
+const UnauthorisedError = require('../utils/unauthorisedError');
 
 async function isLoggedIn(req, res, next) {
     const token = req.cookies["authToken"];
@@ -12,27 +13,58 @@ async function isLoggedIn(req, res, next) {
         });
     }
 
-    const decoded = jwt.verify(token, JWT_SECRET);
+    try {
+        const decoded = jwt.verify(token, JWT_SECRET);
+        if(!decoded){
+            throw new UnauthorisedError();
+        }
+        // if reached here, then user is authenticated allow them to access the api
 
-    if(!decoded) {
-        return res.status(401).json({
+        req.user = {
+            email: decoded.email,
+            id: decoded.id,
+            role : decoded.role
+        }
+
+        next();
+    } catch (error) {
+            return res.status(401).json({
             success: false,
             data: {},
-            error: "Not authenticated",
+            error: error,
             message: "Invalid Token provided"
         });
     }
+}
 
-    // if reached here, then user is authenticated allow them to access the api
+/**
+ * This function checks if the authenticated user is an admin or not ?
+ * Because we will call isAdmin after isLogged thats why we will receive user details
+ */
 
-    req.user = {
-        email: decoded.email,
-        id: decoded.id
+/**
+ * client -> isLoggedin -> isAdmon -> Api controller
+ */
+
+async function isAdmin(req, res, next) { 
+    const loggedInUser = req.user; // fetching the role(user, admin) of logged in user
+    if(loggedInUser.role == "ADMIN"){
+        next();
     }
-
-    next();
+    else{
+        return res.status(401).json({
+            success : false,
+            data : {},
+            message : "You are not authorised for this action",
+            error : {
+                statusCode : 401, 
+                reason : "Unauthorised user for this action"
+            }
+        })
+    }
 }
 
 module.exports = {
-    isLoggedIn
+    isLoggedIn,
+    isAdmin
 }
