@@ -1,5 +1,5 @@
 const express = require('express');
-const { getCartById, getCartByUser, modifyProductToCart } = require('../controllers/cartController.js');
+const { getCartById, getCartByUser, modifyProductToCart, clearCartById } = require('../controllers/cartController.js');
 const { isLoggedIn } = require('../validation/authValidator.js');
 
 const cartRouter = express.Router();
@@ -7,5 +7,7 @@ const cartRouter = express.Router();
 cartRouter.get('/', isLoggedIn,  getCartByUser);
 
 cartRouter.post('/:operation/:productId', isLoggedIn, modifyProductToCart);
+
+cartRouter.delete('/products', isLoggedIn, clearCartById)
 
 module.exports = cartRouter;
