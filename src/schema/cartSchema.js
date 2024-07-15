@@ -4,7 +4,8 @@ const cartSchema = new mongoose.Schema({
     user : {
         type : mongoose.Schema.Types.ObjectId,
         required : true,
-        ref : 'User' // user model only contain user model details
+        ref : 'User', // user model only contain user model details
+        unique : true
     },
     items : [ // array of product id
         {
