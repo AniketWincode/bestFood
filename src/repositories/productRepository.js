@@ -49,6 +49,6 @@ async function deleteProductById(productId) {
 
 module.exports = {
     createProduct,
-    getproductById,
+    getProductById,
     deleteProductById
 }
