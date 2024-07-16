@@ -1,5 +1,18 @@
 const { loginUser } = require("../services/authService");
 
+async function logout(req, res) {
+    res.cookie("authToken", "", {
+            httpOnly: true,
+            secure: false,
+    });
+    return res.status(200).json({
+        success : true,
+        message : "Logout succesfull",
+        error : {},
+        data : {} 
+    });
+}
+
 async function login(req, res) {
     
     try {
@@ -31,5 +44,6 @@ async function login(req, res) {
 }
 
 module.exports = {
-    login
+    login,
+    logout
 }
